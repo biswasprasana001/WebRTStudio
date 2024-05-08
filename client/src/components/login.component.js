@@ -1,8 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+  const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -14,6 +17,7 @@ const Login = () => {
     try {
       const response = await axios.post('/api/login', { email, password });
       alert('User logged in successfully! Token: ' + response.data.token);
+      navigate('/dashboard');
       
     } catch (error) {
       console.error(error);

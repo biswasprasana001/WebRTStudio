@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 require('dotenv').config();
-const User = require('./Modals/User');
+const User = require('./Models/User');
+const Room = require('./Models/Room');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -52,6 +53,28 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error logging in');
+  }
+});
+
+app.post('/api/rooms', async (req, res) => {
+  try {
+    const { name } = req.body;
+    const room = new Room({ name });
+    await room.save();
+    res.status(201).json(room);
+  } catch (error) {
+    console.error('Error creating room:', error);
+    res.status(500).json({ error: 'Failed to create room' });
+  }
+});
+
+app.get('/api/rooms', async (req, res) => {
+  try {
+    const rooms = await Room.find();
+    res.json(rooms);
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    res.status(500).json({ error: 'Failed to fetch rooms' });
   }
 });
 
