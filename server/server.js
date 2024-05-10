@@ -12,6 +12,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
+const socketIo = require('socket.io');
+
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
@@ -78,6 +80,38 @@ app.get('/api/rooms', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+const io = socketIo(server, {
+  cors: true
+});
+
+io.on('connection', (socket) => {
+  socket.on('join', (roomId) => {
+    socket.join(roomId);
+  })
+  // codeEditor
+  socket.on('html', (value, roomId) => {
+    socket.broadcast.to(roomId).emit('html', value);
+  })
+  socket.on('css', (value, roomId) => {
+    socket.broadcast.to(roomId).emit('css', value);
+  })
+  socket.on('js', (value, roomId) => {
+    socket.broadcast.to(roomId).emit('js', value);
+  })
+  // whiteboard
+  socket.on('drawing', data => {
+    socket.broadcast.emit('drawing', data);
+  });
+
+  socket.on('clear', () => {
+    socket.broadcast.emit('clear');
+  });
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
