@@ -3,8 +3,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import CodeEditor from './codeEditor.component';
 import Whiteboard from './whiteboard.component';
-import { SocketProvider } from '../context/SocketProvider';
 import VideoChat from './videoChat.component';
+import TextChat from './textChat.component'
+import { SocketProvider } from '../context/SocketProvider';
 
 const Room = () => {
     const { roomId } = useParams();
@@ -15,6 +16,7 @@ const Room = () => {
                 <Whiteboard />
                 <CodeEditor />
                 <VideoChat />
+                <TextChat />
             </div>
         </SocketProvider>
     );

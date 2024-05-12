@@ -120,6 +120,10 @@ io.on('connection', (socket) => {
       socket.broadcast.to(roomId).emit('user-disconnected', peerId, streamID)
     })
   })
+  // textChat
+  socket.on('text-message', (message, roomId) => {
+    socket.broadcast.to(roomId).emit('text-message', message)
+  })
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
