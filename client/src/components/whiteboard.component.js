@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { useSocket } from '../context/SocketProvider';
+import { useParams } from "react-router-dom";
 
 const Whiteboard = () => {
 
     const socket = useSocket();
+    const { roomId } = useParams();
 
     const canvasRef = useRef(null);
     let drawing = false;
@@ -38,14 +40,14 @@ const Whiteboard = () => {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(function () {
                 var base64ImageData = canvas.toDataURL('image/png');
-                socket.emit('drawing', base64ImageData);
+                socket.emit('drawing', base64ImageData, roomId);
             }, 1000);
         }
     }
 
     const clearCanvasEmit = () => {
         clearCanvas();
-        socket.emit('clear');
+        socket.emit('clear', roomId);
     }
 
     const clearCanvas = () => {
@@ -55,6 +57,7 @@ const Whiteboard = () => {
     }
 
     useEffect(() => {
+        socket.emit('join', roomId);
         drawOnCanvas();
         socket.on('drawing', (base64ImageData) => {
             const canvas = canvasRef.current;

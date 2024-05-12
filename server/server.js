@@ -104,13 +104,22 @@ io.on('connection', (socket) => {
     socket.broadcast.to(roomId).emit('js', value);
   })
   // whiteboard
-  socket.on('drawing', data => {
-    socket.broadcast.emit('drawing', data);
+  socket.on('drawing', (data, roomId) => {
+    socket.broadcast.to(roomId).emit('drawing', data);
   });
 
-  socket.on('clear', () => {
-    socket.broadcast.emit('clear');
+  socket.on('clear', (roomId) => {
+    socket.broadcast.to(roomId).emit('clear');
   });
+  // videoChat
+  socket.on('user-connected', (roomId, peerId, streamID) => {
+    socket.join(roomId)
+    socket.broadcast.to(roomId).emit('user-connected', peerId)
+
+    socket.on('disconnect', () => {
+      socket.broadcast.to(roomId).emit('user-disconnected', peerId, streamID)
+    })
+  })
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
