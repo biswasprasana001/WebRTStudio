@@ -104,10 +104,9 @@ io.on('connection', (socket) => {
     socket.broadcast.to(roomId).emit('js', value);
   })
   // whiteboard
-  socket.on('drawing', (data, roomId) => {
-    socket.broadcast.to(roomId).emit('drawing', data);
+  socket.on('canvasImage', (data, roomId) => {
+    socket.broadcast.to(roomId).emit('canvasImage', data);
   });
-
   socket.on('clear', (roomId) => {
     socket.broadcast.to(roomId).emit('clear');
   });
