@@ -13,8 +13,8 @@ const Room = () => {
         <SocketProvider>
             <div>
                 <h1>Room: {roomId}</h1>
-                <Whiteboard />
                 <CodeEditor />
+                <Whiteboard />
                 <VideoChat />
                 <TextChat />
             </div>
