@@ -2,11 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSocket } from '../context/SocketProvider';
 import { useParams } from 'react-router-dom';
 
-const Board = ({ brushColor, brushSize }) => {
+const Board = ({ brushColor, brushSize, buttonRef }) => {
     const canvasRef = useRef(null);
-    const buttonRef = useRef(null);
     const socket = useSocket();
     const { roomId } = useParams();
+
+    const [windowSize, setWindowSize] = useState([
+        window.innerWidth,
+        window.innerHeight,
+    ]);
 
     useEffect(() => {
         socket.on('canvasImage', (data) => {
@@ -88,37 +92,15 @@ const Board = ({ brushColor, brushSize }) => {
         }
     }, [brushColor, brushSize, socket]);
 
-    const [windowSize, setWindowSize] = useState([
-        window.innerWidth,
-        window.innerHeight,
-    ]);
-
-
-    useEffect(() => {
-        const handleWindowResize = () => {
-            setWindowSize([window.innerWidth, window.innerHeight]);
-        };
-
-
-        window.addEventListener('resize', handleWindowResize);
-
-
-        return () => {
-            window.removeEventListener('resize', handleWindowResize);
-        };
-    }, []);
-
     return (
-        <>
+        <div id='whiteboard'>
             <canvas
                 ref={canvasRef}
-                width={windowSize[0] > 600 ? 600 : 300}
-                height={windowSize[1] > 400 ? 400 : 200}
+                width={2000}
+                height={1000}
                 style={{ backgroundColor: 'black' }}
             />
-            {/* clear button */}
-            <button ref={buttonRef}>Clear</button>
-        </>
+        </div>
     )
 }
 

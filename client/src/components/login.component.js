@@ -2,23 +2,26 @@ import React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
+import '../css/login.component.css';
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   axios.defaults.baseURL = 'http://localhost:5000';
 
   const handleLogin = async () => {
+
     try {
       const response = await axios.post('/api/login', { email, password });
-      alert('User logged in successfully! Token: ' + response.data.token);
-      navigate('/dashboard');
-      
+      const token = response.data.token;
+      if (token) {
+        alert('User logged in successfully!');
+        localStorage.setItem('token', token);
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error(error);
       alert('Invalid email or password');
@@ -26,53 +29,41 @@ const Login = () => {
   };
 
   return (
-    <form>
-      <h3>Sign In</h3>
+    <div id='login'>
+      <form id='login-form'>
+        <h3 id='login-title'>Sign In</h3>
 
-      <div className="mb-3">
-        <label>Email address</label>
-        <input
-          type="email"
-          className="form-control"
-          placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
-          input={email}
-        />
-      </div>
-
-      <div className="mb-3">
-        <label>Password</label>
-        <input
-          type="password"
-          className="form-control"
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
-          input={password}
-        />
-      </div>
-
-      <div className="mb-3">
-        <div className="custom-control custom-checkbox">
+        <div>
+          <label id='email-label'>Email address</label>
           <input
-            type="checkbox"
-            className="custom-control-input"
-            id="customCheck1"
-            onClick={() => setIsLogin(!isLogin)}
+            type="email"
+            placeholder="Enter email"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            id='email-input'
           />
-          <label className="custom-control-label" htmlFor="customCheck1">
-            Remember me
-          </label>
         </div>
-      </div>
 
-      <div className="d-grid gap-2 d-md-flex justify-content-md-center">
-        <button class="btn btn-primary me-md-2" type="button" onClick={handleLogin}>Submit</button>
-        <a href='/sign-up'>
-          <button class="btn btn-primary" type="button">SignUp</button>
-        </a>
-      </div>
-    </form>
+        <div>
+          <label id='password-label'>Password</label>
+          <input
+            type="password"
+            placeholder="Enter password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            id='password-input'
+          />
+        </div>
+
+        <div>
+          <button type="button" onClick={handleLogin} id='login-button'>Submit</button>
+          <a href='/sign-up' id='signup-link'>
+            <button type="button" id='signup-button'>SignUp</button>
+          </a>
+        </div>
+      </form>
+    </div>
   )
 }
 
-export default Login
+export default Login;

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { useParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketProvider';
+import '../css/codeEditor.component.css';
 
 const CodeEditor = () => {
     const socket = useSocket();
     const [html, setHtml] = useState('');
     const [css, setCss] = useState('');
     const [js, setJs] = useState('');
+    const [activeEditor, setActiveEditor] = useState('html');
 
     const runCode = () => {
         const iframe = document.getElementById('iframe').contentWindow.document;
@@ -50,63 +52,88 @@ const CodeEditor = () => {
     }, []);
 
     return (
-        <div>
-            <div className="editor-container">
-                <Editor
-                    height="90vh"
-                    defaultLanguage="html"
-                    // defaultValue={html}
-                    value={html}
-                    onChange={(value) => changeHTML(value)}
-                    options={{
-                        wordWrap: 'on',
-                        minimap: { enabled: false },
-                        showUnused: false,
-                        folding: false,
-                        lineNumbersMinChars: 3,
-                        fontSize: 16,
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                    }}
-                />
-                <Editor
-                    height="90vh"
-                    defaultLanguage="css"
-                    // defaultValue={css}
-                    value={css}
-                    onChange={(value) => changeCSS(value)}
-                    options={{
-                        wordWrap: 'on',
-                        minimap: { enabled: false },
-                        showUnused: false,
-                        folding: false,
-                        lineNumbersMinChars: 3,
-                        fontSize: 16,
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                    }}
-                />
-                <Editor
-                    height="90vh"
-                    defaultLanguage="javascript"
-                    // defaultValue={js}
-                    value={js}
-                    onChange={(value) => changeJS(value)}
-                    options={{
-                        wordWrap: 'on',
-                        minimap: { enabled: false },
-                        showUnused: false,
-                        folding: false,
-                        lineNumbersMinChars: 3,
-                        fontSize: 16,
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                    }}
-                />
+        <>
+            <div id='toggle-buttons'>
+                <button onClick={() => setActiveEditor('html')} id='html-toggle-button'>HTML</button>
+                <button onClick={() => setActiveEditor('css')} id='css-toggle-button'>CSS</button>
+                <button onClick={() => setActiveEditor('js')} id='js-toggle-button'>JS</button>
             </div>
-            <button onClick={runCode}>Run</button>
-            <iframe id="iframe" title="result" style={{ width: '100%', height: '90vh' }} />
-        </div>
+            <div id='editor-container' style={{ display: activeEditor === 'html' ? 'block' : 'none' }}>
+                <p><center>HTML</center></p>
+                <div id="editor">
+                    <div id='html-editor'>
+                        <Editor
+                            height="90vh"
+                            defaultLanguage="html"
+                            value={html}
+                            onChange={(value) => changeHTML(value)}
+                            options={{
+                                wordWrap: 'on',
+                                minimap: { enabled: false },
+                                showUnused: false,
+                                folding: false,
+                                lineNumbersMinChars: 3,
+                                fontSize: 16,
+                                scrollBeyondLastLine: false,
+                                automaticLayout: true,
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div id='editor-container' style={{ display: activeEditor === 'css' ? 'block' : 'none' }}>
+                <p><center>CSS</center></p>
+                <div id="editor">
+                    <div id='css-editor'>
+                        <Editor
+                            height="90vh"
+                            defaultLanguage="css"
+                            value={css}
+                            onChange={(value) => changeCSS(value)}
+                            options={{
+                                wordWrap: 'on',
+                                minimap: { enabled: false },
+                                showUnused: false,
+                                folding: false,
+                                lineNumbersMinChars: 3,
+                                fontSize: 16,
+                                scrollBeyondLastLine: false,
+                                automaticLayout: true,
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div id='editor-container' style={{ display: activeEditor === 'js' ? 'block' : 'none' }}>
+                <p><center>JS</center></p>
+                <div id="editor">
+                    <div id='js-editor'>
+                        <Editor
+                            height="90vh"
+                            defaultLanguage="javascript"
+                            value={js}
+                            onChange={(value) => changeJS(value)}
+                            options={{
+                                wordWrap: 'on',
+                                minimap: { enabled: false },
+                                showUnused: false,
+                                folding: false,
+                                lineNumbersMinChars: 3,
+                                fontSize: 16,
+                                scrollBeyondLastLine: false,
+                                automaticLayout: true,
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div id='run-button-container'>
+            <button onClick={runCode} id='run-button'>Run</button>
+            </div>
+            <div id='iframe-container'>
+                <iframe id="iframe" title="result" style={{ width: '100%', height: '90vh' }} />
+            </div>
+        </>
     );
 };
 

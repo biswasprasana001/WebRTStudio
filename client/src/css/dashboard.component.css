@@ -1,0 +1,76 @@
+#dashboard {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+#logout-button,
+#submit-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#logout-button:hover,
+#submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Form */
+#dashboard-form {
+    margin: 20px auto;
+}
+
+#room-name-input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#submit-button {
+    width: 100%;
+}
+
+/* Rooms List */
+#room-title {
+    color: #007bff;
+}
+
+#room-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#room-list li button {
+    width: 100%;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#room-list li button:hover {
+    background-color: #e9ecef;
+}

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import LogoutButton from './logout.component';
+import '../css/dashboard.component.css';
 
 const Dashboard = () => {
   const [roomName, setRoomName] = useState('');
@@ -36,31 +38,31 @@ const Dashboard = () => {
   };
 
   return (
-    <>
-      <div className="container">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Enter room name"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
-          />
-          <button type="submit">Create Room</button>
-        </form>
-        <div className="room">
-          <h2>Rooms:</h2>
-        </div>
-        <ul>
-          {rooms.map((room) => (
-            <li key={room._id}>
-              <button onClick={() => navigate(`/room/${room.name}`)}>
-                {room.name}
-              </button>
-            </li>
-          ))}
-        </ul>
+    <div id='dashboard'>
+      <LogoutButton />
+      <form onSubmit={handleSubmit} id='dashboard-form'>
+        <input
+          type="text"
+          placeholder="Enter room name"
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+          id='room-name-input'
+        />
+        <button type="submit" id='submit-button'>Create Room</button>
+      </form>
+      <div>
+        <h2 id='room-title'>Rooms:</h2>
       </div>
-    </>
+      <ul id='room-list'>
+        {rooms.map((room) => (
+          <li key={room._id}>
+            <button onClick={() => navigate(`/room/${room.name}`)}>
+              {room.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

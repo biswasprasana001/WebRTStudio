@@ -1,0 +1,25 @@
+/* src/Navbar.css */
+.navbar {
+  display: flex;
+  align-items: center;
+  background-color: #f0f4f8;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.navbar-button {
+  background-color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 1rem;
+  border-radius: 0.5rem;
+}
+
+.navbar-button:hover {
+  background-color: #ddd;
+}
