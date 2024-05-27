@@ -7,11 +7,6 @@ const Board = ({ brushColor, brushSize, buttonRef }) => {
     const socket = useSocket();
     const { roomId } = useParams();
 
-    const [windowSize, setWindowSize] = useState([
-        window.innerWidth,
-        window.innerHeight,
-    ]);
-
     useEffect(() => {
         socket.on('canvasImage', (data) => {
             const image = new Image();

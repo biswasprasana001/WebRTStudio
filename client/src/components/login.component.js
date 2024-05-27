@@ -1,11 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import '../css/login.component.css';
+import { UserContext } from '../context/UserContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUsername } = useContext(UserContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +19,11 @@ const Login = () => {
     try {
       const response = await axios.post('/api/login', { email, password });
       const token = response.data.token;
+      const username = response.data.username;
+      console.log(username);
+      if (username) {
+        setUsername(username);
+      }
       if (token) {
         alert('User logged in successfully!');
         localStorage.setItem('token', token);

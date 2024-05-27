@@ -59,7 +59,7 @@ const CodeEditor = () => {
                 <button onClick={() => setActiveEditor('js')} id='js-toggle-button'>JS</button>
             </div>
             <div id='editor-container' style={{ display: activeEditor === 'html' ? 'block' : 'none' }}>
-                <p><center>HTML</center></p>
+                <center><p>HTML</p></center>
                 <div id="editor">
                     <div id='html-editor'>
                         <Editor
@@ -82,7 +82,7 @@ const CodeEditor = () => {
                 </div>
             </div>
             <div id='editor-container' style={{ display: activeEditor === 'css' ? 'block' : 'none' }}>
-                <p><center>CSS</center></p>
+                <center><p>CSS</p></center>
                 <div id="editor">
                     <div id='css-editor'>
                         <Editor
@@ -105,7 +105,7 @@ const CodeEditor = () => {
                 </div>
             </div>
             <div id='editor-container' style={{ display: activeEditor === 'js' ? 'block' : 'none' }}>
-                <p><center>JS</center></p>
+                <center><p>JS</p></center>
                 <div id="editor">
                     <div id='js-editor'>
                         <Editor
@@ -128,7 +128,7 @@ const CodeEditor = () => {
                 </div>
             </div>
             <div id='run-button-container'>
-            <button onClick={runCode} id='run-button'>Run</button>
+                <button onClick={runCode} id='run-button'>Run</button>
             </div>
             <div id='iframe-container'>
                 <iframe id="iframe" title="result" style={{ width: '100%', height: '90vh' }} />

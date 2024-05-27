@@ -18,7 +18,7 @@ const SignUp = () => {
     try {
       await axios.post('/api/register', { username, email, password });
       alert('User registered successfully');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error(error);
       alert('Error registering user');

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSocket } from '../context/SocketProvider';
 import { useParams } from 'react-router-dom';
 import Peer from 'peerjs';
+import '../css/videoChat.component.css';
 
-const VideoChat = () => {
+const VideoChat = ({ openVC, setOpenVC}) => {
     const [streams, setStreams] = useState([]);
     const [myStream, setMyStream] = useState(null);
 
@@ -60,17 +61,24 @@ const VideoChat = () => {
     }, []);
 
     return (
-        <div>
-            {myStream && <video autoPlay playsInline muted ref={video => {
-                if (video) video.srcObject = myStream;
-            }} />}
-            {streams
-                .filter((stream, index) => index === streams.indexOf(stream))
-                .map((stream, index) => (
-                    <video key={index} autoPlay playsInline ref={video => {
-                        if (video) video.srcObject = stream;
-                    }} />
-                ))}
+        <div id='video-chat' style={{ display: openVC ? '' : 'none' }}>
+            <button onClick={() => setOpenVC(false)} id='video-chat-close-button'>Close</button>
+            <div id='video-container'>
+                <div id='video'>
+                    {myStream && <video autoPlay playsInline muted ref={video => {
+                        if (video) video.srcObject = myStream;
+                    }} id='video-element' />}
+                </div>
+                {streams
+                    .filter((stream, index) => index === streams.indexOf(stream))
+                    .map((stream, index) => (
+                        <div id='video' key={index}>
+                            <video key={index} autoPlay playsInline ref={video => {
+                                if (video) video.srcObject = stream;
+                            }} id='video-element' />
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 };

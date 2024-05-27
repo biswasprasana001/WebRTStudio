@@ -29,7 +29,7 @@ app.post('/api/register', async (req, res) => {
     const { username, email, password } = req.body;
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashedPassword });
+    const user = new User({ username, email, password: hashedPassword });
     await user.save();
     res.status(201).send('User registered successfully');
   } catch (err) {
@@ -51,7 +51,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).send('Invalid email or password');
     }
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ token });
+    res.status(200).json({ token, username: user.username });
   } catch (err) {
     console.error(err);
     res.status(500).send('Error logging in');
