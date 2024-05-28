@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useSocket } from '../context/SocketProvider';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import '../css/textChat.component.css';
 
-function Chat() {
+function Chat({ openC, setOpenC }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
@@ -33,10 +34,11 @@ function Chat() {
   };
 
   return (
-    <div className='chatPage'>
-      <div className='chatContainer'>
-        <div className='chatBox'>
-          <ul className='messages'>
+    <div id='chatPage' style={{ display: openC ? '' : 'none' }}>
+      <button id='closeChat-btn' onClick={() => setOpenC(false)}>Close</button>
+      <div id='chatContainer'>
+        <div id='chatBox'>
+          <ul id='messages'>
             {messages.map((msg, index) => (
               <li key={index}>
                 <strong>{msg.username}: </strong>
@@ -45,13 +47,14 @@ function Chat() {
             ))}
           </ul>
         </div>
-        <div className='inputBox'>
+        <div id='message-form'>
           <input
             value={input}
             placeholder='Write a message...'
             onChange={(e) => setInput(e.target.value)}
+            id='message-input'
           />
-          <button id="button" onClick={sendMessage}>Send</button>
+          <button onClick={sendMessage} id='message-send-button'>Send</button>
         </div>
       </div>
     </div>

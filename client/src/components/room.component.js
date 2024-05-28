@@ -36,7 +36,7 @@ const Room = () => {
                 <CodeEditor />
                 <Whiteboard openWB={openWB} setOpenWB={setOpenWB}/>
                 <VideoChat openVC={openVC} setOpenVC={setOpenVC}/>
-                <TextChat />
+                <TextChat openC={openC} setOpenC={setOpenC}/>
             </div>
         </SocketProvider>
     );
