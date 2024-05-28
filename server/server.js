@@ -7,6 +7,8 @@ const cors = require('cors');
 require('dotenv').config();
 const User = require('./Models/User');
 const Room = require('./Models/Room');
+const Code = require('./Models/Code');
+const Message = require('./Models/Message');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -80,6 +82,55 @@ app.get('/api/rooms', async (req, res) => {
   }
 });
 
+app.post('/api/code/save', async (req, res) => {
+  try {
+    const { roomId, html, css, js } = req.body;
+    const code = await Code.findOneAndUpdate(
+      { roomId },
+      { html, css, js },
+      { new: true, upsert: true }
+    );
+    res.status(200).json(code);
+  } catch (error) {
+    console.error('Error saving code:', error);
+    res.status(500).json({ error: 'Failed to save code' });
+  }
+
+});
+
+app.get('/api/code/:roomId', async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const code = await Code.findOne({ roomId });
+    res.json(code);
+  } catch (error) {
+    console.error('Error fetching code:', error);
+    res.status(500).json({ error: 'Failed to fetch code' });
+  }
+});
+
+app.post('/api/message/save', async (req, res) => {
+  try {
+    const { username, text, roomId } = req.body;
+    const message = new Message({ username, text, roomId });
+    await message.save();
+    res.status(200).json(message);
+  } catch (error) {
+    console.error('Error saving message:', error);
+    res.status(500).json({ error: 'Failed to save message' });
+  }
+})
+
+app.get('/api/message/:roomId', async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const messages = await Message.find({ roomId });
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -18,6 +18,21 @@ const CodeEditor = () => {
         iframe.close();
     };
 
+    const saveCode = () => {
+        fetch('http://localhost:5000/api/code/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                roomId: roomId,
+                html: html,
+                css: css,
+                js: js
+            }),
+        })
+    }
+
     const { roomId } = useParams();
 
     const changeHTML = (value) => {
@@ -51,12 +66,33 @@ const CodeEditor = () => {
         });
     }, []);
 
+    useEffect(() => {
+        fetch(`http://localhost:5000/api/code/${roomId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data && (data.html || data.css || data.js)) {
+                    setHtml(data.html);
+                    setCss(data.css);
+                    setJs(data.js);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching code:', error);
+            });
+    }, []);
+
     return (
         <>
             <div id='toggle-buttons'>
                 <button onClick={() => setActiveEditor('html')} id='html-toggle-button'>HTML</button>
                 <button onClick={() => setActiveEditor('css')} id='css-toggle-button'>CSS</button>
                 <button onClick={() => setActiveEditor('js')} id='js-toggle-button'>JS</button>
+                <button onClick={() => saveCode()} id='save-button'>Save</button>
             </div>
             <div id='editor-container' style={{ display: activeEditor === 'html' ? 'block' : 'none' }}>
                 <center><p>HTML</p></center>

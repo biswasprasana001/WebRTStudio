@@ -27,11 +27,37 @@ function Chat({ openC, setOpenC }) {
     const message = {
       username,
       text: input,
+      roomId,
     };
+    fetch('http://localhost:5000/api/message/save/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    })
     setMessages((prevMessages) => [...prevMessages, message]);
     socket.emit('text-message', message, roomId);
     setInput('');
   };
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/message/${roomId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          setMessages(data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching code:', error);
+      });
+  }, []);
 
   return (
     <div id='chatPage' style={{ display: openC ? '' : 'none' }}>
