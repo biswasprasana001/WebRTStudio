@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const SignUp = () => {
 
   const navigate = useNavigate();
-  axios.defaults.baseURL = 'http://localhost:5000';
+  axios.defaults.baseURL = 'https://webrtstudio-server.onrender.com';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

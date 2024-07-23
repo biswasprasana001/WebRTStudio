@@ -29,7 +29,7 @@ function Chat({ openC, setOpenC }) {
       text: input,
       roomId,
     };
-    fetch('http://localhost:5000/api/message/save/', {
+    fetch('https://webrtstudio-server.onrender.com/api/message/save/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ function Chat({ openC, setOpenC }) {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/message/${roomId}`, {
+    fetch(`https://webrtstudio-server.onrender.com/api/message/${roomId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

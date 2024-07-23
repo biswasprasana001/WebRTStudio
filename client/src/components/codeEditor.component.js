@@ -19,7 +19,7 @@ const CodeEditor = () => {
     };
 
     const saveCode = () => {
-        fetch('http://localhost:5000/api/code/save', {
+        fetch('https://webrtstudio-server.onrender.com/api/code/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const CodeEditor = () => {
     }, []);
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/code/${roomId}`, {
+        fetch(`https://webrtstudio-server.onrender.com/api/code/${roomId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
