@@ -1,5 +1,11 @@
 # WebRTStudio
 
+## Live Demo
+
+You can access the live version of the project [here](https://web-rt-studio-client.vercel.app/). Please note that the backend may take 50 seconds or longer to load, as the server shuts down after 30 minutes of inactivity and requires time to restart upon receiving a new request.
+
+##
+
 WebRTStudio is a web-based collaborative platform designed for real-time communication and code collaboration. The platform supports video and text chat, a code editor, and a whiteboard, enabling users to work together efficiently and effectively.
 
 ## Features
@@ -28,6 +34,7 @@ WebRTStudio is a web-based collaborative platform designed for real-time communi
 - **Mongoose**: ODM for MongoDB, providing schema-based data modeling.
 - **JWT**: For secure user authentication.
 - **Socket.io**: For WebSocket-based real-time communication.
+
 
 ## Getting Started
 
