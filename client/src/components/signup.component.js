@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import '../css/signup.component.css';
 import { useNavigate } from 'react-router-dom';
+import Message from './message.component';
 
 const SignUp = () => {
 
@@ -27,6 +28,7 @@ const SignUp = () => {
 
   return (
     <div id='signup'>
+      <Message />
       <form onSubmit={handleRegister} id='signup-form'>
         <h3 id='signup-title'>Sign Up</h3>
         <div>

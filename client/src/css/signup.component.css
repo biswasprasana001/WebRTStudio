@@ -6,6 +6,7 @@
     align-items: center;
     height: 100vh;
     margin: 0;
+    flex-direction: column;
 }
 
 #signup-form {
@@ -67,6 +68,7 @@ button:hover {
 #signup-link {
     color: #007BFF;
     text-decoration: none;
+    margin-top: 10px;
 }
 
 #signup-link:hover {

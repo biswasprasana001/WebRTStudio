@@ -6,6 +6,7 @@
     align-items: center;
     height: 100vh;
     margin: 0;
+    flex-direction: column;
 }
 
 #login-form {

@@ -4,6 +4,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import '../css/login.component.css';
 import { UserContext } from '../context/UserContext';
+import Message from './message.component';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const Login = () => {
 
   return (
     <div id='login'>
+      <Message />
       <form id='login-form'>
         <h3 id='login-title'>Sign In</h3>
 
