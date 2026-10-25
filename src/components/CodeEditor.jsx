@@ -57,7 +57,18 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
   const [html, setHtml] = useState(DEFAULT_HTML);
   const [css, setCss] = useState(DEFAULT_CSS);
   const [js, setJs] = useState(DEFAULT_JS);
-  const previewRef = useRef(null);
+  const buildSrcDoc = () => `<!DOCTYPE html>
+<html>
+  <head>
+    <style>${css}</style>
+  </head>
+  <body>
+    ${html}
+    <script>${js}<\/script>
+  </body>
+</html>`;
+
+  const [srcDoc, setSrcDoc] = useState(buildSrcDoc);
 
   // Sync incoming code from remote peers
   useEffect(() => {
@@ -69,27 +80,15 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
   }, [lastCodeUpdate]);
 
   const runCode = () => {
-    if (!previewRef.current) return;
-    const doc = previewRef.current.contentDocument || previewRef.current.contentWindow.document;
-    doc.open();
-    doc.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>${css}</style>
-        </head>
-        <body>
-          ${html}
-          <script>${js}<\/script>
-        </body>
-      </html>
-    `);
-    doc.close();
+    setSrcDoc(buildSrcDoc());
   };
 
-  // Initial and auto execution
+  // Auto-run preview with 250ms debounce
   useEffect(() => {
-    runCode();
+    const timer = setTimeout(() => {
+      setSrcDoc(buildSrcDoc());
+    }, 250);
+    return () => clearTimeout(timer);
   }, [html, css, js]);
 
   const handleCodeChange = (newVal) => {
@@ -145,7 +144,12 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
         <div class="preview-header">
           <span>Live Preview</span>
         </div>
-        <iframe ref={previewRef} class="preview-iframe" title="Code Preview" sandbox="allow-scripts allow-modals" />
+        <iframe
+          class="preview-iframe"
+          title="Code Preview"
+          sandbox="allow-scripts allow-modals"
+          srcdoc={srcDoc}
+        />
       </div>
     </div>
   );
