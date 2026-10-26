@@ -210,6 +210,19 @@ Imagine you and a friend want to work together in a room:
   - In Window 2, the header button updates to show an unread count: `💬 Chat (2)`.
   - Clicking **💬 Chat** re-opens the sidebar and scrolls smoothly down to the latest message.
 
+#### Test 5.3: Floating Overlay & Zero-Layout Shift
+* **Intuition**: The chat must hover over the existing UI as a lightweight layer, never squeezing the code editor, whiteboard, or preview.
+* **Steps**:
+  1. Note the width of the code editor or preview pane while chat is open.
+  2. Click the **✕** close button inside the chat header.
+  3. Verify the chat disappears smoothly.
+  4. Notice the workspace underneath: it did not jump, reflow, or reload.
+  5. Click the top navbar **💬 Chat** button to reopen the overlay.
+* **Expected Result**:
+  - The chat overlay opens directly on top of the workspace.
+  - The **✕** button closes the overlay immediately.
+  - Workspace layout remains 100% stable with zero layout shifts.
+
 ---
 
 ### Suite 6: Rearranging Your Desk (Layout Modes)

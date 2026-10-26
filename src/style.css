@@ -312,6 +312,7 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
 .studio-workspace {
@@ -324,12 +325,18 @@ body {
 }
 
 .studio-sidebar {
-  width: 300px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 90vw;
   border-left: 1px solid var(--border-default);
   background: var(--bg-surface);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.45);
+  z-index: 50;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
 }
 
 /* --- 4. CODE EDITOR --- */
@@ -617,6 +624,7 @@ body {
   height: 38px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 12px;
   border-bottom: 1px solid var(--border-default);
   font-weight: 600;
@@ -624,6 +632,23 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-medium);
+}
+
+.btn-close-chat {
+  background: transparent;
+  border: none;
+  color: var(--text-medium);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: color 0.1s ease, background 0.1s ease;
+}
+
+.btn-close-chat:hover {
+  color: var(--text-high);
+  background: var(--bg-subtle);
 }
 
 .chat-messages {

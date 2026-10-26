@@ -257,6 +257,7 @@ export function App() {
               username={username}
               messages={messages}
               onSendMessage={(msg) => setMessages((prev) => [...prev, msg])}
+              onClose={() => setShowChat(false)}
             />
           </aside>
         )}

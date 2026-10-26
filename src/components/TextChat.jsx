@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'preact/hooks';
 
-export function TextChat({ webrtc, username, messages, onSendMessage }) {
+export function TextChat({ webrtc, username, messages, onSendMessage, onClose }) {
   const [input, setInput] = useState('');
   const chatEndRef = useRef(null);
 
@@ -33,6 +33,9 @@ export function TextChat({ webrtc, username, messages, onSendMessage }) {
     <div class="chat-container">
       <div class="chat-header">
         <span>💬 Room Chat</span>
+        {onClose && (
+          <button type="button" class="btn-close-chat" onClick={onClose} title="Close Chat" aria-label="Close Chat">✕</button>
+        )}
       </div>
 
       <div class="chat-messages">
