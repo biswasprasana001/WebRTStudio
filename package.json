@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node test-signaling.js",
+    "test:qe": "node test-qe.js",
     "start": "node server.js"
   },
   "keywords": [
