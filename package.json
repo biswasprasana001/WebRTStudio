@@ -11,6 +11,7 @@
     "test": "node test-signaling.js",
     "test:qe": "node test-qe.js",
     "test:qe:ui": "node test-ui-browser-qe.js",
+    "test:qe:languages": "node test-all-languages-qe.js",
     "start": "node server.js"
   },
   "keywords": [
