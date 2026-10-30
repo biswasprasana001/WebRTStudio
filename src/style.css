@@ -99,23 +99,97 @@ button:hover,
   background: var(--surface);
   border: 1px solid var(--border);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   padding: 24px;
 }
-.lobby-header { margin-bottom: 18px; }
-.logo-title { font-size: 1.25rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
-.logo-subtitle { color: var(--dim); font-size: 11px; }
-.lobby-form { gap: 12px; margin-bottom: 18px; }
-.form-group { gap: 4px; }
-.form-group label { font-size: 11px; color: var(--dim); text-transform: uppercase; }
-.form-input { background: var(--bg); border: 1px solid var(--border); }
-.form-input:focus { border-color: var(--accent); }
-.btn-primary { background: var(--fg); color: var(--bg); font-weight: 700; border: 1px solid var(--fg); padding: 8px; }
-.btn-primary:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-.lobby-perks { border-top: 1px dashed var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
-.perk-item { display: flex; gap: 8px; font-size: 11px; }
-.perk-item strong { color: var(--fg); }
-.perk-item p { color: var(--dim); }
+.lobby-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+.logo-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.logo-subtitle {
+  color: var(--dim);
+  font-size: 11px;
+}
+.lobby-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.form-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dim);
+  letter-spacing: 0.5px;
+}
+.form-input {
+  width: 100%;
+  padding: 7px 9px;
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+}
+.form-input:focus {
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-enter {
+  width: 100%;
+  padding: 9px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+.btn-primary {
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 700;
+  border: 1px solid var(--fg);
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.lobby-perks {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.perk-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+}
+.perk-tag {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.perk-item p {
+  color: var(--dim);
+  line-height: 1.3;
+}
 
 /* --- Studio Header & Nav --- */
 .studio-header {

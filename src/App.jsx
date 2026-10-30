@@ -122,56 +122,54 @@ export function App() {
             <p class="logo-subtitle">Real-Time Peer-to-Peer Collaborative Workspace</p>
           </div>
 
-          <div class="lobby-form">
+          <form
+            class="lobby-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const el = document.getElementById('roomInput');
+              joinRoom(el ? el.value : 'default-room');
+            }}
+          >
             <div class="form-group">
-              <label>Your Display Name</label>
+              <label for="usernameInput">&gt; DISPLAY NAME</label>
               <input
+                id="usernameInput"
                 type="text"
                 class="form-input"
                 value={username}
                 placeholder="e.g. Alice"
+                autocomplete="off"
+                spellcheck="false"
                 onInput={(e) => setUsername(e.target.value)}
               />
             </div>
 
             <div class="form-group">
-              <label>Room Identifier</label>
-              <div class="input-with-button">
-                <input
-                  type="text"
-                  id="roomInput"
-                  class="form-input"
-                  placeholder="e.g. design-sprint"
-                  defaultValue={`room-${Math.random().toString(36).substring(2, 7)}`}
-                />
-              </div>
+              <label for="roomInput">&gt; ROOM IDENTIFIER</label>
+              <input
+                type="text"
+                id="roomInput"
+                class="form-input"
+                placeholder="e.g. design-sprint"
+                autocomplete="off"
+                spellcheck="false"
+                defaultValue={`room-${Math.random().toString(36).substring(2, 7)}`}
+              />
             </div>
 
-            <button
-              class="btn-primary"
-              onClick={() => {
-                const el = document.getElementById('roomInput');
-                joinRoom(el ? el.value : 'default-room');
-              }}
-            >
-              🚀 Enter Studio
+            <button type="submit" class="btn-primary btn-enter">
+              [ ENTER STUDIO &rarr; ]
             </button>
-          </div>
+          </form>
 
           <div class="lobby-perks">
             <div class="perk-item">
-              <span class="perk-icon">🔒</span>
-              <div>
-                <strong>Direct P2P</strong>
-                <p>Media and data flow directly between browsers. Never saved on servers.</p>
-              </div>
+              <span class="perk-tag">[P2P]</span>
+              <p>Direct browser-to-browser streaming. Zero server storage.</p>
             </div>
             <div class="perk-item">
-              <span class="perk-icon">⚡</span>
-              <div>
-                <strong>Zero Latency</strong>
-                <p>Collaborative code, vector whiteboard, and instant chat with zero DB overhead.</p>
-              </div>
+              <span class="perk-tag">[SPEED]</span>
+              <p>In-memory collaborative code, vector whiteboard, and chat.</p>
             </div>
           </div>
         </div>
