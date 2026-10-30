@@ -5,6 +5,17 @@ import { CodeEditor } from './components/CodeEditor';
 import { Whiteboard } from './components/Whiteboard';
 import { TextChat } from './components/TextChat';
 
+const ScreenWarning = () => (
+  <div class="screen-size-warning">
+    <div class="warning-card">
+      <div class="warning-icon">💻</div>
+      <h2>PC / Desktop Screen Required</h2>
+      <p>WebRTStudio requires a wider display for code editing, whiteboard sketching, and video streaming.</p>
+      <p class="dim-text">Please widen your window or open on a computer.</p>
+    </div>
+  </div>
+);
+
 export function App() {
   const [roomId, setRoomId] = useState(() => {
     return new URLSearchParams(window.location.search).get('room') || '';
@@ -16,7 +27,8 @@ export function App() {
   const [inRoom, setInRoom] = useState(Boolean(roomId));
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('editor'); // 'editor', 'whiteboard', 'split'
-  const [showChat, setShowChat] = useState(true);
+  const [showChat, setShowChat] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
 
   // WebRTC & Data States
   const webrtcRef = useRef(null);
@@ -163,6 +175,7 @@ export function App() {
             </div>
           </div>
         </div>
+        <ScreenWarning />
       </div>
     );
   }
@@ -223,7 +236,12 @@ export function App() {
         {/* Workspace Center Area */}
         <main class="studio-workspace">
           {activeTab === 'editor' && (
-            <CodeEditor webrtc={webrtcRef.current} lastCodeUpdate={lastCodeUpdate} />
+            <CodeEditor
+              webrtc={webrtcRef.current}
+              lastCodeUpdate={lastCodeUpdate}
+              showPreview={showPreview}
+              onTogglePreview={() => setShowPreview((prev) => !prev)}
+            />
           )}
           {activeTab === 'whiteboard' && (
             <Whiteboard webrtc={webrtcRef.current} lastWhiteboardAction={lastWhiteboardAction} />
@@ -231,7 +249,12 @@ export function App() {
           {activeTab === 'split' && (
             <div class="split-view">
               <div class="split-half">
-                <CodeEditor webrtc={webrtcRef.current} lastCodeUpdate={lastCodeUpdate} />
+                <CodeEditor
+                  webrtc={webrtcRef.current}
+                  lastCodeUpdate={lastCodeUpdate}
+                  showPreview={showPreview}
+                  onTogglePreview={() => setShowPreview((prev) => !prev)}
+                />
               </div>
               <div class="split-half">
                 <Whiteboard webrtc={webrtcRef.current} lastWhiteboardAction={lastWhiteboardAction} />
@@ -249,7 +272,7 @@ export function App() {
           </div>
         </main>
 
-        {/* Right Sidebar: Chat */}
+        {/* Right Floating Overlay Drawer: Chat */}
         {showChat && (
           <aside class="studio-sidebar">
             <TextChat
@@ -262,6 +285,8 @@ export function App() {
           </aside>
         )}
       </div>
+
+      <ScreenWarning />
     </div>
   );
 }

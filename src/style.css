@@ -139,7 +139,19 @@ button:hover,
 /* --- Studio Body & Panes --- */
 .studio-body { display: flex; flex: 1; overflow: hidden; position: relative; }
 .studio-workspace { background: var(--bg); }
-.studio-sidebar { width: 320px; max-width: 90vw; border-left: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; z-index: 10; }
+.studio-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
 .split-half, .editor-pane { border-right: 1px solid var(--border); }
 
 /* --- Code Editor & Preview --- */
@@ -182,3 +194,33 @@ button:hover,
 .chat-input { flex: 1; background: var(--bg); border: 1px solid var(--border); }
 .chat-input:focus { border-color: var(--accent); }
 .btn-send { font-weight: 700; }
+
+/* --- Desktop Screen Safeguard --- */
+.screen-size-warning {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.warning-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px;
+  max-width: 380px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.warning-icon { font-size: 2rem; margin-bottom: 4px; }
+.warning-card h2 { color: var(--accent); font-size: 13px; font-weight: 700; }
+.warning-card p { font-size: 12px; color: var(--fg); }
+.warning-card .dim-text { color: var(--dim); font-size: 11px; }
+
+@media (max-width: 768px) {
+  .screen-size-warning { display: flex; }
+}

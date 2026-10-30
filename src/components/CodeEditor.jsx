@@ -52,7 +52,7 @@ btn.addEventListener('click', () => {
   counter.textContent = \`\${count} clicks\`;
 });`;
 
-export function CodeEditor({ webrtc, lastCodeUpdate }) {
+export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onTogglePreview }) {
   const [activeTab, setActiveTab] = useState('html');
   const [html, setHtml] = useState(DEFAULT_HTML);
   const [css, setCss] = useState(DEFAULT_CSS);
@@ -83,13 +83,14 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
     setSrcDoc(buildSrcDoc());
   };
 
-  // Auto-run preview with 250ms debounce
+  // Auto-run preview with 250ms debounce only when preview is visible
   useEffect(() => {
+    if (!showPreview) return;
     const timer = setTimeout(() => {
       setSrcDoc(buildSrcDoc());
     }, 250);
     return () => clearTimeout(timer);
-  }, [html, css, js]);
+  }, [html, css, js, showPreview]);
 
   const handleCodeChange = (newVal) => {
     let nextHtml = html;
@@ -127,7 +128,19 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
             <button class={`tab-btn ${activeTab === 'css' ? 'active' : ''}`} onClick={() => setActiveTab('css')}>CSS</button>
             <button class={`tab-btn ${activeTab === 'js' ? 'active' : ''}`} onClick={() => setActiveTab('js')}>JS</button>
           </div>
-          <button class="btn-run" onClick={runCode}>▶ Run Code</button>
+          <div class="tab-group">
+            {onTogglePreview && (
+              <button
+                type="button"
+                class={`tab-btn ${showPreview ? 'active' : ''}`}
+                onClick={onTogglePreview}
+                title="Toggle Live Code Preview"
+              >
+                {showPreview ? '👁 Preview: ON' : '👁 Preview: OFF'}
+              </button>
+            )}
+            <button class="btn-run" onClick={runCode}>▶ Run Code</button>
+          </div>
         </div>
 
         <textarea
@@ -140,17 +153,19 @@ export function CodeEditor({ webrtc, lastCodeUpdate }) {
         />
       </div>
 
-      <div class="preview-pane">
-        <div class="preview-header">
-          <span>Live Preview</span>
+      {showPreview && (
+        <div class="preview-pane">
+          <div class="preview-header">
+            <span>Live Preview</span>
+          </div>
+          <iframe
+            class="preview-iframe"
+            title="Code Preview"
+            sandbox="allow-scripts allow-modals"
+            srcdoc={srcDoc}
+          />
         </div>
-        <iframe
-          class="preview-iframe"
-          title="Code Preview"
-          sandbox="allow-scripts allow-modals"
-          srcdoc={srcDoc}
-        />
-      </div>
+      )}
     </div>
   );
 }
