@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "node test-signaling.js",
     "test:qe": "node test-qe.js",
+    "test:qe:ui": "node test-ui-browser-qe.js",
     "start": "node server.js"
   },
   "keywords": [

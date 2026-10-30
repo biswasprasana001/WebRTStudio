@@ -247,7 +247,7 @@ export function App() {
             <Whiteboard webrtc={webrtcRef.current} lastWhiteboardAction={lastWhiteboardAction} />
           )}
           {activeTab === 'split' && (
-            <div class="split-view">
+            <div class={`split-view ${showPreview ? 'split-three-way' : ''}`}>
               <div class="split-half">
                 <CodeEditor
                   webrtc={webrtcRef.current}

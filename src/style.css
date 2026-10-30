@@ -153,6 +153,7 @@ button:hover,
   z-index: 50;
 }
 .split-half, .editor-pane { border-right: 1px solid var(--border); }
+.split-view.split-three-way > :first-child { flex: 2; }
 
 /* --- Code Editor & Preview --- */
 .tab-btn { background: transparent; border: 1px solid var(--border); padding: 2px 6px; }
@@ -221,6 +222,6 @@ button:hover,
 .warning-card p { font-size: 12px; color: var(--fg); }
 .warning-card .dim-text { color: var(--dim); font-size: 11px; }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .screen-size-warning { display: flex; }
 }
