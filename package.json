@@ -8,10 +8,8 @@
     "dev:server": "node server.js",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node test-signaling.js",
+    "test": "node test-signaling.js && node test-qe.js",
     "test:qe": "node test-qe.js",
-    "test:qe:ui": "node test-ui-browser-qe.js",
-    "test:qe:languages": "node test-all-languages-qe.js",
     "start": "node server.js"
   },
   "keywords": [

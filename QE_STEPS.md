@@ -369,28 +369,21 @@ Imagine you and a friend want to work together in a room:
 
 ---
 
-## 🤖 Running Automated QE Regression Tests
+## 🤖 Running Automated Unit & Regression Tests
 
-We also have automated test suites that verify signaling handshakes, room isolation, data contracts, and browser UI layouts in seconds without manual clicking:
+We also have automated test suites that verify signaling handshakes, room isolation, data contracts, and server resilience in seconds without manual clicking:
 
 ```bash
-# 1. Run signaling unit test
+# 1. Run all unit and protocol regression tests
 npm test
 
 # 2. Run core QE regression test suite
 npm run test:qe
-
-# 3. Run full headless browser automated UI verification
-npm run test:qe:ui
 ```
 
-### What Automated QE Checks:
+### What Automated Tests Check:
 1. **Room Isolation**: Peer in `room-alpha` must never receive signals or messages meant for `room-beta`.
 2. **Peer Discovery Handshake**: New peers joining trigger `peer-joined` to existing peers and receive `peers-in-room`.
 3. **Data Channel Payload Integrity**: Code broadcast, whiteboard vector strokes, and chat message structures match exact schemas.
 4. **Instant Cleanup**: When a client disconnects, the server immediately notifies remaining peers with `peer-left`.
-5. **Headless Browser Layout Verification**:
-   - Launches headless browser via Chrome DevTools Protocol (CDP).
-   - Verifies 3-way equal split space distribution (Editor: 33.3%, Preview: 33.3%, Whiteboard: 33.3%, delta <= 2.5px).
-   - Verifies dynamic preview toggling cleanly restores 50/50 Editor + Whiteboard split.
-   - Verifies 1024px screen safeguard: overlay warning appears at 1023px and mobile viewports, and automatically hides at >= 1024px.
+5. **Server Resilience**: Server remains robust and gracefully handles unexpected or malformed WebSocket messages.

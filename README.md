@@ -84,17 +84,14 @@ npm start
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Quality Engineering (QE) Verification
-Run automated tests covering signaling, protocol contracts, and browser UI layout verification:
+### 4. Automated Tests
+Run automated tests covering signaling, peer discovery, room isolation, and protocol contracts:
 ```bash
-# Run signaling handshake unit test
+# Run all unit and protocol regression tests
 npm test
 
-# Run core QE regression test suite (isolation, protocol contracts, disconnects)
+# Run standalone QE protocol regression suite
 npm run test:qe
-
-# Run headless browser automated UI verification (split layouts & screen safeguards)
-npm run test:qe:ui
 ```
 
 ---
