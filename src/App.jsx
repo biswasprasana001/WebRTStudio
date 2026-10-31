@@ -124,14 +124,14 @@ export function App() {
           if (msg.action?.type === 'draw' && msg.action.stroke) {
             setWhiteboardStrokes((prev) => {
               const next = [...prev, msg.action.stroke];
-              return next.length > 250 ? next.slice(-250) : next;
+              return next.length > 2000 ? next.slice(-2000) : next;
             });
           } else if (msg.action?.type === 'clear') {
             setWhiteboardStrokes([]);
           }
           setLastWhiteboardAction(msg.action);
         } else if (msg.type === 'whiteboard-sync') {
-          const syncStrokes = (msg.strokes || []).slice(-250);
+          const syncStrokes = (msg.strokes || []).slice(-2000);
           setWhiteboardStrokes(syncStrokes);
           setLastWhiteboardAction({ type: 'sync', strokes: syncStrokes });
         } else if (msg.type === 'request-sync') {
@@ -305,7 +305,7 @@ export function App() {
               onLocalStroke={(stroke) => {
                 setWhiteboardStrokes((prev) => {
                   const next = [...prev, stroke];
-                  return next.length > 250 ? next.slice(-250) : next;
+                  return next.length > 2000 ? next.slice(-2000) : next;
                 });
               }}
               onLocalClear={() => setWhiteboardStrokes([])}
@@ -332,7 +332,7 @@ export function App() {
                   onLocalStroke={(stroke) => {
                     setWhiteboardStrokes((prev) => {
                       const next = [...prev, stroke];
-                      return next.length > 250 ? next.slice(-250) : next;
+                      return next.length > 2000 ? next.slice(-2000) : next;
                     });
                   }}
                   onLocalClear={() => setWhiteboardStrokes([])}
