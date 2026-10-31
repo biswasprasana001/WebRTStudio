@@ -177,7 +177,7 @@ const DEFAULT_RUBY = `puts "Hello from Ruby in WebRTStudio! ⚡"
 puts "Squares: #{(1..5).map { |n| n ** 2 }}"
 `;
 
-const INITIAL_CODE_FILES = {
+export const INITIAL_CODE_FILES = {
   html: DEFAULT_HTML,
   css: DEFAULT_CSS,
   javascript: DEFAULT_JS,
@@ -215,9 +215,15 @@ const COOLDOWN_MS = 3000;
 const MAX_PAYLOAD_CHARS = 50000; // 50 KB safety limit
 const SANDBOX_TIMEOUT_MS = 60000; // 60s timeout for compiled sandboxes
 
-export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onTogglePreview }) {
-  const [activeLang, setActiveLang] = useState('html');
-  const [codeFiles, setCodeFiles] = useState(INITIAL_CODE_FILES);
+export function CodeEditor({
+  webrtc,
+  codeFiles = INITIAL_CODE_FILES,
+  onChangeCodeFiles,
+  activeLang = 'html',
+  onChangeActiveLang,
+  showPreview = true,
+  onTogglePreview
+}) {
   const textareaRef = useRef(null);
 
   // Terminal & execution state
@@ -254,22 +260,6 @@ export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onToggl
 
   const [srcDoc, setSrcDoc] = useState(buildSrcDoc);
 
-  // Sync incoming code from remote peers
-  useEffect(() => {
-    if (lastCodeUpdate) {
-      setCodeFiles((prev) => {
-        const next = { ...prev };
-        if (lastCodeUpdate.lang && lastCodeUpdate.code !== undefined) {
-          next[lastCodeUpdate.lang] = lastCodeUpdate.code;
-        }
-        if (lastCodeUpdate.html !== undefined) next.html = lastCodeUpdate.html;
-        if (lastCodeUpdate.css !== undefined) next.css = lastCodeUpdate.css;
-        if (lastCodeUpdate.js !== undefined) next.javascript = lastCodeUpdate.js;
-        return next;
-      });
-    }
-  }, [lastCodeUpdate]);
-
   // Auto-run web preview with 250ms debounce only when on web languages & preview is visible
   useEffect(() => {
     if (!showPreview) return;
@@ -282,26 +272,25 @@ export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onToggl
   }, [codeFiles.html, codeFiles.css, codeFiles.javascript, showPreview, activeLang]);
 
   const handleCodeChange = (newVal) => {
-    setCodeFiles((prev) => {
-      const nextFiles = { ...prev, [activeLang]: newVal };
-      // 50ms batch throttle for P2P data broadcast to avoid per-keystroke spam
-      if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
-      broadcastTimerRef.current = setTimeout(() => {
-        webrtc?.broadcastData({
-          type: 'code',
-          lang: activeLang,
-          code: newVal,
-          html: nextFiles.html,
-          css: nextFiles.css,
-          js: nextFiles.javascript
-        });
-      }, 50);
-      return nextFiles;
-    });
+    const nextFiles = { ...codeFiles, [activeLang]: newVal };
+    onChangeCodeFiles?.(nextFiles);
+
+    // 50ms batch throttle for P2P data broadcast to avoid per-keystroke spam
+    if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
+    broadcastTimerRef.current = setTimeout(() => {
+      webrtc?.broadcastData({
+        type: 'code',
+        lang: activeLang,
+        code: newVal,
+        html: nextFiles.html,
+        css: nextFiles.css,
+        js: nextFiles.javascript
+      });
+    }, 50);
   };
 
   const handleLanguageChange = (lang) => {
-    setActiveLang(lang);
+    onChangeActiveLang?.(lang);
   };
 
   // Keyboard enhancements: Tab indentation and Ctrl+Enter execution

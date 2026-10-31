@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { StudioWebRTC } from './webrtc';
 import { VideoGrid } from './components/VideoGrid';
-import { CodeEditor } from './components/CodeEditor';
+import { CodeEditor, INITIAL_CODE_FILES } from './components/CodeEditor';
 import { Whiteboard } from './components/Whiteboard';
 import { TextChat } from './components/TextChat';
 
@@ -35,10 +35,16 @@ export function App() {
   const [localStream, setLocalStream] = useState(null);
   const [remoteStreams, setRemoteStreams] = useState(new Map());
   const [messages, setMessages] = useState([]);
-  const [lastCodeUpdate, setLastCodeUpdate] = useState(null);
+  const [codeFiles, setCodeFiles] = useState(INITIAL_CODE_FILES);
+  const [activeLang, setActiveLang] = useState('html');
+  const codeFilesRef = useRef(INITIAL_CODE_FILES);
   const [lastWhiteboardAction, setLastWhiteboardAction] = useState(null);
   const [whiteboardStrokes, setWhiteboardStrokes] = useState([]);
   const whiteboardStrokesRef = useRef([]);
+
+  useEffect(() => {
+    codeFilesRef.current = codeFiles;
+  }, [codeFiles]);
 
   useEffect(() => {
     whiteboardStrokesRef.current = whiteboardStrokes;
@@ -72,6 +78,8 @@ export function App() {
     setRemoteStreams(new Map());
     setMessages([]);
     setWhiteboardStrokes([]);
+    setCodeFiles(INITIAL_CODE_FILES);
+    setActiveLang('html');
   };
 
   const copyRoomLink = () => {
@@ -98,7 +106,20 @@ export function App() {
       },
       (msg, fromPeerId) => {
         if (msg.type === 'code') {
-          setLastCodeUpdate(msg);
+          setCodeFiles((prev) => {
+            const next = { ...prev };
+            if (msg.lang && msg.code !== undefined) {
+              next[msg.lang] = msg.code;
+            }
+            if (msg.html !== undefined) next.html = msg.html;
+            if (msg.css !== undefined) next.css = msg.css;
+            if (msg.js !== undefined) next.javascript = msg.js;
+            return next;
+          });
+        } else if (msg.type === 'code-sync') {
+          if (msg.codeFiles && typeof msg.codeFiles === 'object') {
+            setCodeFiles((prev) => ({ ...prev, ...msg.codeFiles }));
+          }
         } else if (msg.type === 'whiteboard') {
           if (msg.action?.type === 'draw' && msg.action.stroke) {
             setWhiteboardStrokes((prev) => {
@@ -118,6 +139,12 @@ export function App() {
             rtc.sendToPeer(fromPeerId, {
               type: 'whiteboard-sync',
               strokes: whiteboardStrokesRef.current
+            });
+          }
+          if (codeFilesRef.current) {
+            rtc.sendToPeer(fromPeerId, {
+              type: 'code-sync',
+              codeFiles: codeFilesRef.current
             });
           }
         } else if (msg.type === 'chat') {
@@ -262,7 +289,10 @@ export function App() {
           {activeTab === 'editor' && (
             <CodeEditor
               webrtc={webrtcRef.current}
-              lastCodeUpdate={lastCodeUpdate}
+              codeFiles={codeFiles}
+              onChangeCodeFiles={setCodeFiles}
+              activeLang={activeLang}
+              onChangeActiveLang={setActiveLang}
               showPreview={showPreview}
               onTogglePreview={() => setShowPreview((prev) => !prev)}
             />
@@ -286,7 +316,10 @@ export function App() {
               <div class="split-half">
                 <CodeEditor
                   webrtc={webrtcRef.current}
-                  lastCodeUpdate={lastCodeUpdate}
+                  codeFiles={codeFiles}
+                  onChangeCodeFiles={setCodeFiles}
+                  activeLang={activeLang}
+                  onChangeActiveLang={setActiveLang}
                   showPreview={showPreview}
                   onTogglePreview={() => setShowPreview((prev) => !prev)}
                 />
