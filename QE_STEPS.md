@@ -23,8 +23,9 @@ Imagine you and a friend want to work together in a room:
 | **Suite 3** | **Collaborative Code & Sandbox** | Shared Safe Scratchpad | 250ms debounced auto-run, live peer sync, JS clicks |
 | **Suite 4** | **Vector Whiteboard** | Digital Chalkboard | Smooth lines, color/brush picks, instant P2P draw |
 | **Suite 5** | **Text Chat** | Private Side Whispers | Fast delivery, timestamp, unread badge counter |
-| **Suite 6** | **Layout Switching** | Rearranging Your Desk | Code Studio vs Whiteboard vs 50/50 Split View |
-| **Suite 7** | **Edge Cases & Disconnects** | Rough Seas & Power Outages | Camera blocked fallback, clean leave, tab closing |
+| **Suite 6** | **Layout Switching & Preview Toggle** | Rearranging Your Desk | 3-Way Equal Split, 50/50 Dual Split, Live Preview Toggle |
+| **Suite 7** | **Edge Cases & Screen Safeguards** | Rough Seas & Small Screens | Camera blocked fallback, clean leave, 1024px desktop warning |
+| **Suite 8** | **Multi-Language Studio & Terminal** | The Polyglot Workshop | 16 languages, Wandbox runner, 0ms cache replay, cooldown & Tab indent |
 
 ---
 
@@ -225,7 +226,7 @@ Imagine you and a friend want to work together in a room:
 
 ---
 
-### Suite 6: Rearranging Your Desk (Layout Modes)
+### Suite 6: Rearranging Your Desk (Layout Modes & Preview Toggle)
 
 #### Test 6.1: Code Studio Mode
 * **Intuition**: Maximize screen space for code editing and previewing.
@@ -237,17 +238,33 @@ Imagine you and a friend want to work together in a room:
 * **Steps**: Click **🎨 Whiteboard**.
 * **Expected Result**: The canvas takes up the entire workspace. The canvas automatically resizes to fill the container without distorting existing drawings.
 
-#### Test 6.3: Split View Mode
-* **Intuition**: For pairing sessions where you want to draw a diagram on the right while writing code on the left!
-* **Steps**: Click **🔲 Split View**.
+#### Test 6.3: Split View Mode & 3-Way Equal Distribution
+* **Intuition**: For pairing sessions where you want to draw a diagram on the right while writing code on the left! When live preview is active, all three tools share the screen in a balanced 3-way split.
+* **Steps**:
+  1. Ensure you are editing a web file (HTML/CSS/JS) with preview active.
+  2. Click **🔲 Split View** in the top navigation bar.
+  3. Inspect the three columns: Code Editor, Live Preview, and Whiteboard.
 * **Expected Result**:
-  - The screen splits into 50% Code Editor on the left and 50% Whiteboard on the right.
-  - You can edit code and draw on the whiteboard simultaneously.
-  - Both sides remain fully synchronized with remote peers.
+  - The split view container adopts `.split-three-way`.
+  - The screen divides equally into three columns (each approximately 33.3% of the total workspace width, delta <= 2.5px).
+  - You can edit code, view live updates, and draw on the whiteboard simultaneously without clipping.
+  - Remote peers receive both code and whiteboard updates in real time.
+
+#### Test 6.4: Dynamic Live Preview Toggle
+* **Intuition**: If you want to maximize your code editor and whiteboard space, you can turn off the preview pane with one click.
+* **Steps**:
+  1. While in **🔲 Split View**, find the **👁️ Preview: ON** button in the editor toolbar.
+  2. Click **👁️ Preview: ON**.
+  3. Inspect the screen layout.
+  4. Click the button again (**👁️ Preview: OFF**).
+* **Expected Result**:
+  - Clicking turns the button to **👁️ Preview: OFF** and unmounts the preview pane.
+  - The `.split-three-way` class is removed, smoothly transitioning the workspace to a clean 50/50 dual split (50% Code Editor, 50% Whiteboard).
+  - Clicking again restores the preview pane and reinstates the balanced 3-way split.
 
 ---
 
-### Suite 7: Rough Seas & Edge Cases (Failures & Exits)
+### Suite 7: Rough Seas & Edge Cases (Failures, Exits & Safeguards)
 
 #### Test 7.1: Clean Exit via Leave Button
 * **Intuition**: Politely saying goodbye, closing connections, and heading back to the lobby.
@@ -276,18 +293,95 @@ Imagine you and a friend want to work together in a room:
   - An empty media stream is created.
   - The app stays fully functional in **Data-Only mode**: the user can still edit code, draw, and chat with peers.
 
+#### Test 7.4: Screen Size Safeguard (1024px Boundary)
+* **Intuition**: WebRTStudio is built for serious desktop collaboration with multiple panes (editor, whiteboard, video dock). Small or cramped phone screens would break the experience, so we show a clear warning shield when the screen is under 1024px wide.
+* **Steps**:
+  1. In a desktop browser window, open DevTools and toggle Device Emulation.
+  2. Set window width to `1024px`.
+  3. Verify the screen is completely usable with no warning shield.
+  4. Reduce window width by 1px to `1023px`.
+  5. Verify the screen shield appears.
+  6. Test mobile sizes (e.g. 600px width).
+  7. Resize back to `>= 1024px`.
+* **Expected Result**:
+  - At `1024px` or wider, `.screen-size-warning` is hidden (`display: none`).
+  - At `1023px` or narrower, `.screen-size-warning` appears as a full overlay (`display: flex`) with the message: `💻 PC / Desktop Screen Required`.
+  - Restoring width `>= 1024px` instantly dismisses the overlay and restores normal access without reloading.
+
+---
+
+### Suite 8: The Polyglot Workshop (Multi-Language Studio & Terminal Sandbox)
+
+#### Test 8.1: Multi-Language Switching
+* **Intuition**: WebRTStudio supports 16 languages across web, compiled, and scripting ecosystems. Switching tabs lets you write in any language with starter templates ready.
+* **Steps**:
+  1. Ensure you are on the **💻 Code Studio** tab.
+  2. Examine the language selector bar above the editor: `HTML`, `CSS`, `JS`, `PY`, `C++`, `C`, `RS`, `GO`, `JAVA`, `SQL`, `SH`, `TS`, `MD`, `JSON`, `PHP`, `RB`.
+  3. Click on the `PY` tab.
+* **Expected Result**:
+  - The editor loads a clean Python starter script with `def greet(name): ...`.
+  - For non-web languages, the live HTML preview pane automatically hides to maximize code editing area.
+  - Your peer in Window 2 sees your selected language and edits sync in real time.
+
+#### Test 8.2: Sandbox Execution & Terminal Output
+* **Intuition**: Running code safely inside an isolated cloud sandbox (Wandbox) and viewing console output in an integrated terminal with zero local installations required.
+* **Steps**:
+  1. On the `PY` tab, click **▶ Run Code** or press `Ctrl + Enter` (or `Cmd + Enter`).
+* **Expected Result**:
+  - The run button updates to `⏳ Running...`.
+  - The terminal panel opens below the editor.
+  - Upon completion, the terminal displays:
+    - Status badge: `Status: Exit 0` (green).
+    - Runtime timer: `Duration: ~X.Xs`.
+    - Console output showing:
+      ```
+      Hello, WebRTStudio Peer! 🚀
+      Calculated squares: [1, 4, 9, 16, 25]
+      ```
+
+#### Test 8.3: Memoized Execution Cache (0ms Instant Replay)
+* **Intuition**: If the code has not changed, rerunning it shouldn't waste time or hit the network. We instantly replay the cached results in 0 milliseconds!
+* **Steps**:
+  1. Without editing the code, click **▶ Run Code** again.
+* **Expected Result**:
+  - The terminal re-renders instantaneously with 0ms delay.
+  - The timer badge displays `⚡ Cached (0ms)`.
+  - Zero unnecessary cloud compilation requests are made.
+
+#### Test 8.4: Cooldown & Rate Limiting Guardrail
+* **Intuition**: Free public sandbox APIs must be protected from spam, infinite double-clicks, and accidental script bombardment.
+* **Steps**:
+  1. Modify the Python code (e.g. change `range(1, 6)` to `range(1, 8)`).
+  2. Click **▶ Run Code**, and immediately click it a second time.
+* **Expected Result**:
+  - The first run executes smoothly.
+  - The second run is stopped by the 3-second cooldown guardrail, displaying a polite cooldown warning in the terminal (`Cooldown active. Please wait X.Xs before running again.`).
+
+#### Test 8.5: Keyboard Productivity & Tab Indentation
+* **Intuition**: In code editors, pressing the Tab key should insert 2 spaces instead of unfocusing the editor or jumping to the address bar.
+* **Steps**:
+  1. Place your cursor inside any line in the code editor.
+  2. Press the `Tab` key on your keyboard.
+* **Expected Result**:
+  - Exactly 2 spaces (`  `) are inserted at the cursor position.
+  - Cursor advances past the two spaces.
+  - Focus remains firmly inside the editor textarea.
+
 ---
 
 ## 🤖 Running Automated QE Regression Tests
 
-We also have an automated test suite that tests signaling handshakes, room isolation, and peer data broadcasts in seconds without opening a browser:
+We also have automated test suites that verify signaling handshakes, room isolation, data contracts, and browser UI layouts in seconds without manual clicking:
 
 ```bash
-# Run signaling unit test
+# 1. Run signaling unit test
 npm test
 
-# Run full QE automated regression suite
+# 2. Run core QE regression test suite
 npm run test:qe
+
+# 3. Run full headless browser automated UI verification
+npm run test:qe:ui
 ```
 
 ### What Automated QE Checks:
@@ -295,3 +389,8 @@ npm run test:qe
 2. **Peer Discovery Handshake**: New peers joining trigger `peer-joined` to existing peers and receive `peers-in-room`.
 3. **Data Channel Payload Integrity**: Code broadcast, whiteboard vector strokes, and chat message structures match exact schemas.
 4. **Instant Cleanup**: When a client disconnects, the server immediately notifies remaining peers with `peer-left`.
+5. **Headless Browser Layout Verification**:
+   - Launches headless browser via Chrome DevTools Protocol (CDP).
+   - Verifies 3-way equal split space distribution (Editor: 33.3%, Preview: 33.3%, Whiteboard: 33.3%, delta <= 2.5px).
+   - Verifies dynamic preview toggling cleanly restores 50/50 Editor + Whiteboard split.
+   - Verifies 1024px screen safeguard: overlay warning appears at 1023px and mobile viewports, and automatically hides at >= 1024px.
