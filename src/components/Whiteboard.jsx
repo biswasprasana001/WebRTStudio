@@ -1,13 +1,19 @@
 import { useRef, useEffect, useState } from 'preact/hooks';
 
-export function Whiteboard({ webrtc, lastWhiteboardAction }) {
+export function Whiteboard({
+  webrtc,
+  lastWhiteboardAction,
+  initialStrokes = [],
+  onLocalStroke,
+  onLocalClear
+}) {
   const canvasRef = useRef(null);
   const [color, setColor] = useState('#38bdf8');
   const [brushSize, setBrushSize] = useState(4);
   const isDrawing = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
 
-  // Handle incoming remote drawings
+  // Handle incoming remote drawings and sync
   useEffect(() => {
     if (!lastWhiteboardAction || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -18,6 +24,11 @@ export function Whiteboard({ webrtc, lastWhiteboardAction }) {
       drawSegment(ctx, x0, y0, x1, y1, strokeColor, strokeWidth);
     } else if (lastWhiteboardAction.type === 'clear') {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    } else if (lastWhiteboardAction.type === 'sync' && Array.isArray(lastWhiteboardAction.strokes)) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      lastWhiteboardAction.strokes.forEach(([x0, y0, x1, y1, strokeColor, strokeWidth]) => {
+        drawSegment(ctx, x0, y0, x1, y1, strokeColor, strokeWidth);
+      });
     }
   }, [lastWhiteboardAction]);
 
@@ -45,6 +56,13 @@ export function Whiteboard({ webrtc, lastWhiteboardAction }) {
     };
 
     resizeCanvas();
+    if (initialStrokes && initialStrokes.length > 0) {
+      const ctx = canvas.getContext('2d');
+      initialStrokes.forEach(([x0, y0, x1, y1, strokeColor, strokeWidth]) => {
+        drawSegment(ctx, x0, y0, x1, y1, strokeColor, strokeWidth);
+      });
+    }
+
     window.addEventListener('resize', resizeCanvas);
     return () => window.removeEventListener('resize', resizeCanvas);
   }, []);
@@ -92,9 +110,10 @@ export function Whiteboard({ webrtc, lastWhiteboardAction }) {
     ];
 
     drawSegment(ctx, ...stroke);
+    onLocalStroke?.(stroke);
 
     // Vector stroke P2P broadcast (only ~30 bytes!)
-    webrtc.broadcastData({
+    webrtc?.broadcastData({
       type: 'whiteboard',
       action: { type: 'draw', stroke }
     });
@@ -110,8 +129,9 @@ export function Whiteboard({ webrtc, lastWhiteboardAction }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    onLocalClear?.();
 
-    webrtc.broadcastData({
+    webrtc?.broadcastData({
       type: 'whiteboard',
       action: { type: 'clear' }
     });

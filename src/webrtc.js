@@ -117,6 +117,20 @@ export class StudioWebRTC {
     const peerObj = this.peers.get(remotePeerId);
     if (peerObj) peerObj.dc = channel;
 
+    const requestSync = () => {
+      try {
+        channel.send(JSON.stringify({ type: 'request-sync' }));
+      } catch (err) {
+        console.warn('Sync request failed:', err);
+      }
+    };
+
+    if (channel.readyState === 'open') {
+      requestSync();
+    } else {
+      channel.onopen = requestSync;
+    }
+
     channel.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data);
@@ -172,6 +186,13 @@ export class StudioWebRTC {
       if (dc && dc.readyState === 'open') {
         dc.send(payload);
       }
+    }
+  }
+
+  sendToPeer(peerId, data) {
+    const peerObj = this.peers.get(peerId);
+    if (peerObj?.dc?.readyState === 'open') {
+      peerObj.dc.send(JSON.stringify(data));
     }
   }
 

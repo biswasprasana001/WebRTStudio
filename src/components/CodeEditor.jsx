@@ -233,6 +233,13 @@ export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onToggl
   // Anti-abuse guardrails refs
   const lastRunTimeRef = useRef(0);
   const executionCacheRef = useRef(new Map()); // Key: `${compiler}:${code}`, Value: result
+  const broadcastTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
+    };
+  }, []);
 
   const buildSrcDoc = () => `<!DOCTYPE html>
 <html>
@@ -277,15 +284,18 @@ export function CodeEditor({ webrtc, lastCodeUpdate, showPreview = true, onToggl
   const handleCodeChange = (newVal) => {
     setCodeFiles((prev) => {
       const nextFiles = { ...prev, [activeLang]: newVal };
-      // P2P direct broadcast to peers with zero server load
-      webrtc?.broadcastData({
-        type: 'code',
-        lang: activeLang,
-        code: newVal,
-        html: nextFiles.html,
-        css: nextFiles.css,
-        js: nextFiles.javascript
-      });
+      // 50ms batch throttle for P2P data broadcast to avoid per-keystroke spam
+      if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
+      broadcastTimerRef.current = setTimeout(() => {
+        webrtc?.broadcastData({
+          type: 'code',
+          lang: activeLang,
+          code: newVal,
+          html: nextFiles.html,
+          css: nextFiles.css,
+          js: nextFiles.javascript
+        });
+      }, 50);
       return nextFiles;
     });
   };

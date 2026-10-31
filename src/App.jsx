@@ -37,6 +37,12 @@ export function App() {
   const [messages, setMessages] = useState([]);
   const [lastCodeUpdate, setLastCodeUpdate] = useState(null);
   const [lastWhiteboardAction, setLastWhiteboardAction] = useState(null);
+  const [whiteboardStrokes, setWhiteboardStrokes] = useState([]);
+  const whiteboardStrokesRef = useRef([]);
+
+  useEffect(() => {
+    whiteboardStrokesRef.current = whiteboardStrokes;
+  }, [whiteboardStrokes]);
 
   // Save username to local storage
   useEffect(() => {
@@ -65,6 +71,7 @@ export function App() {
     setRoomId('');
     setRemoteStreams(new Map());
     setMessages([]);
+    setWhiteboardStrokes([]);
   };
 
   const copyRoomLink = () => {
@@ -89,11 +96,30 @@ export function App() {
           return next;
         });
       },
-      (msg) => {
+      (msg, fromPeerId) => {
         if (msg.type === 'code') {
           setLastCodeUpdate(msg);
         } else if (msg.type === 'whiteboard') {
+          if (msg.action?.type === 'draw' && msg.action.stroke) {
+            setWhiteboardStrokes((prev) => {
+              const next = [...prev, msg.action.stroke];
+              return next.length > 250 ? next.slice(-250) : next;
+            });
+          } else if (msg.action?.type === 'clear') {
+            setWhiteboardStrokes([]);
+          }
           setLastWhiteboardAction(msg.action);
+        } else if (msg.type === 'whiteboard-sync') {
+          const syncStrokes = (msg.strokes || []).slice(-250);
+          setWhiteboardStrokes(syncStrokes);
+          setLastWhiteboardAction({ type: 'sync', strokes: syncStrokes });
+        } else if (msg.type === 'request-sync') {
+          if (whiteboardStrokesRef.current.length > 0) {
+            rtc.sendToPeer(fromPeerId, {
+              type: 'whiteboard-sync',
+              strokes: whiteboardStrokesRef.current
+            });
+          }
         } else if (msg.type === 'chat') {
           setMessages((prev) => [...prev, msg.message]);
         }
@@ -242,7 +268,18 @@ export function App() {
             />
           )}
           {activeTab === 'whiteboard' && (
-            <Whiteboard webrtc={webrtcRef.current} lastWhiteboardAction={lastWhiteboardAction} />
+            <Whiteboard
+              webrtc={webrtcRef.current}
+              lastWhiteboardAction={lastWhiteboardAction}
+              initialStrokes={whiteboardStrokes}
+              onLocalStroke={(stroke) => {
+                setWhiteboardStrokes((prev) => {
+                  const next = [...prev, stroke];
+                  return next.length > 250 ? next.slice(-250) : next;
+                });
+              }}
+              onLocalClear={() => setWhiteboardStrokes([])}
+            />
           )}
           {activeTab === 'split' && (
             <div class={`split-view ${showPreview ? 'split-three-way' : ''}`}>
@@ -255,7 +292,18 @@ export function App() {
                 />
               </div>
               <div class="split-half">
-                <Whiteboard webrtc={webrtcRef.current} lastWhiteboardAction={lastWhiteboardAction} />
+                <Whiteboard
+                  webrtc={webrtcRef.current}
+                  lastWhiteboardAction={lastWhiteboardAction}
+                  initialStrokes={whiteboardStrokes}
+                  onLocalStroke={(stroke) => {
+                    setWhiteboardStrokes((prev) => {
+                      const next = [...prev, stroke];
+                      return next.length > 250 ? next.slice(-250) : next;
+                    });
+                  }}
+                  onLocalClear={() => setWhiteboardStrokes([])}
+                />
               </div>
             </div>
           )}

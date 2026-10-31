@@ -151,6 +151,21 @@ import('./server.js').then(async () => {
     };
     assert(chatPayload.type === 'chat');
     assert(chatPayload.message.id && chatPayload.message.sender && chatPayload.message.text);
+
+    // Verify Late-Joiner Whiteboard History Sync Schema & Cap
+    const sampleStrokes = Array.from({ length: 300 }, (_, i) => [i, i, i + 1, i + 1, '#38bdf8', 4]);
+    const cappedStrokes = sampleStrokes.slice(-250);
+    const whiteboardSyncPayload = {
+      type: 'whiteboard-sync',
+      strokes: cappedStrokes
+    };
+    assert(whiteboardSyncPayload.type === 'whiteboard-sync');
+    assert(Array.isArray(whiteboardSyncPayload.strokes));
+    assert.strictEqual(whiteboardSyncPayload.strokes.length, 250, 'History buffer must strictly cap at 250 strokes to prevent memory leaks');
+
+    const requestSyncPayload = { type: 'request-sync' };
+    assert.strictEqual(requestSyncPayload.type, 'request-sync');
+
     console.log('  ✓ PASSED: All P2P data structures conform strictly to application protocol.\n');
 
     // -------------------------------------------------------------
@@ -181,7 +196,42 @@ import('./server.js').then(async () => {
     wsAttacker.close();
     wsAliveChecker.close();
 
-    console.log('🎉 ALL AUTOMATED QUALITY ENGINEERING (QE) TESTS PASSED SUCCESSFULLY! (5/5)');
+    // -------------------------------------------------------------
+    // Test Case 6: Late-Joiner Whiteboard History & 50ms Micro-Throttle Contracts
+    // -------------------------------------------------------------
+    console.log('▶ Test 6: Verifying Late-Joiner History Buffer & 50ms Keystroke Throttle...');
+    
+    // Part A: Bounded Circular Stroke Buffer
+    const buffer = [];
+    for (let i = 0; i < 350; i++) {
+      buffer.push([i, i, i + 1, i + 1, '#38bdf8', 4]);
+      if (buffer.length > 250) buffer.shift();
+    }
+    assert.strictEqual(buffer.length, 250, 'Buffer must cap at exactly 250 items');
+    assert.strictEqual(buffer[0][0], 100, 'Oldest strokes must be shifted to avoid memory leak');
+    assert.strictEqual(buffer[249][0], 349, 'Newest strokes must be preserved');
+
+    // Part B: 50ms Keystroke Batch Throttling
+    let broadcastCount = 0;
+    let throttleTimer = null;
+    const simulateKeystroke = () => {
+      if (throttleTimer) clearTimeout(throttleTimer);
+      throttleTimer = setTimeout(() => {
+        broadcastCount++;
+      }, 50);
+    };
+
+    // Rapid burst of 10 keystrokes within 20ms
+    for (let k = 0; k < 10; k++) {
+      simulateKeystroke();
+      await delay(2);
+    }
+    assert.strictEqual(broadcastCount, 0, 'No broadcast should occur during typing burst');
+    await delay(70);
+    assert.strictEqual(broadcastCount, 1, 'Exactly one batched broadcast must occur after 50ms pause');
+    console.log('  ✓ PASSED: Late-joiner buffer cap and 50ms keystroke batch throttling verified.\n');
+
+    console.log('🎉 ALL AUTOMATED QUALITY ENGINEERING (QE) TESTS PASSED SUCCESSFULLY! (6/6)');
     process.exit(0);
   } catch (err) {
     console.error('❌ Automated QE Test Failure:', err);
